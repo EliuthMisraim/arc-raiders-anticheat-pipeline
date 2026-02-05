@@ -74,7 +74,16 @@ El análisis exploratorio muestra que, mientras los jugadores con lag tienen vel
 
 ## 📥 Instalación y Uso
 
+Sigue estos pasos para replicar el entorno de desarrollo y ejecutar el pipeline de detección:
+
 1. **Clonar el repositorio:**
    ```bash
-   git clone [https://github.com/tu-usuario/arc-raiders-anticheat.git](https://github.com/tu-usuario/arc-raiders-anticheat.git)
-   cd arc-raiders-anticheat
+   git clone [https://github.com/EliuthMisraim/arc-raiders-anticheat-pipeline.git](https://github.com/EliuthMisraim/arc-raiders-anticheat-pipeline.git)
+   cd arc-raiders-anticheat-pipeline
+
+Instalar dependencias:
+
+Bash
+pip install apache-beam[gcp] skl2onnx onnxruntime scikit-learn seaborn pandas numpy
+Ejecutar el pipeline:
+Ejecuta el script principal o el notebook para generar el archivo anti_cheat_model.onnx.
