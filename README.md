@@ -13,11 +13,11 @@ En un entorno competitivo como **ARC Raiders**, la integridad de la partida es e
 ---
 
 ## 📖 Tabla de Contenidos
-1. [## 🚀 Introducción](#introducción)
-2. [Arquitectura del Sistema](#arquitectura-del-sistema)
-3. [Stack Tecnológico](#stack-tecnológico)
-4. [Pipeline de Datos](#pipeline-de-datos)
-5. [Instalación y Uso](#instalación-y-uso)
+1. [🚀 Introducción](#introducción)
+2. [🏗️ Arquitectura del Sistema](#arquitectura-del-sistema)
+3. [🛠️ Stack Tecnológico](#stack-tecnológico)
+4. [⚙️ Pipeline de Datos](#pipeline-de-datos)
+5. [📥 Instalación y Uso](#instalación-y-uso)
 6. [El Puente a Producción (Go)](#el-puente-a-producción-go)
 
 ---
