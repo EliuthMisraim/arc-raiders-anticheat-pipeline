@@ -1,6 +1,8 @@
 # ARC Raiders: Real-Time Anti-Cheat System 🛡️🤖
 ### Data Scientist / Engineer Pipeline for Anomaly Detection
 
+[![Repo Status](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/EliuthMisraim/arc-raiders-anticheat-pipeline)
+
 ![Python](https://img.shields.io/badge/python-3.9+-blue.svg)
 ![Apache Beam](https://img.shields.io/badge/Apache%20Beam-GCP%20Dataflow-orange.svg)
 ![ONNX](https://img.shields.io/badge/Model-ONNX%20Runtime-purple.svg)
