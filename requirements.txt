@@ -1,0 +1,10 @@
+apache-beam[gcp]
+pandas
+numpy
+scikit-learn
+skl2onnx
+onnx
+onnxruntime
+seaborn
+matplotlib
+pytest

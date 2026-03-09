@@ -1,0 +1,2 @@
+PYTHONPATH: ['C:\\Users\\eliut\\Downloads\\Data Science stuff\\arc-raiders-anticheat-pipeline', 'C:\\Users\\eliut\\AppData\\Local\\Programs\\Python\\Python311\\python311.zip', 'C:\\Users\\eliut\\AppData\\Local\\Programs\\Python\\Python311\\DLLs', 'C:\\Users\\eliut\\AppData\\Local\\Programs\\Python\\Python311\\Lib', 'C:\\Users\\eliut\\AppData\\Local\\Programs\\Python\\Python311', 'C:\\Users\\eliut\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages']
+CWD: C:\Users\eliut\Downloads\Data Science stuff\arc-raiders-anticheat-pipeline
