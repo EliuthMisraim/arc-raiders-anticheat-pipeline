@@ -8,39 +8,46 @@
 ![ONNX](https://img.shields.io/badge/Model-ONNX%20Runtime-purple.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-En un entorno competitivo como **ARC Raiders**, la integridad de la partida es el activo más valioso. Este repositorio contiene el pipeline completo de ingeniería de datos y ciencia de datos para identificar *cheaters* (Speedhacks) diferenciándolos de jugadores con problemas de red (*Lag*).
+En un entorno competitivo como **ARC Raiders**, la integridad de la partida es el activo más valioso. Este repositorio contiene un pipeline avanzado de ingeniería de datos y ciencia de datos para identificar *cheaters* mediante el análisis de comportamiento server-side.
 
 ---
 
 ## 📖 Tabla de Contenidos
 1. [🚀 Introducción](#introducción)
-2. [🏗️ Arquitectura del Sistema](#arquitectura-del-sistema)
+2. [🏗️ Arquitectura del Systema](#arquitectura-del-sistema)
 3. [🛠️ Stack Tecnológico](#stack-tecnológico)
-4. [⚙️ Pipeline de Datos](#pipeline-de-datos)
+4. [⚙️ Pipeline de Datos y Características](#pipeline-de-datos)
 5. [📥 Instalación y Uso](#instalación-y-uso)
-6. [El Puente a Producción (Go)](#el-puente-a-producción-go)
+6. [🔌 Guía de Integración (Go/Python)](#guía-de-integración)
 
 ---
 
 ## 🚀 Introducción
 
-Este sistema no se basa en escaneo de archivos locales (Client-side), sino en el **Análisis de Comportamiento Server-Side**. 
-El desafío principal es la **precisión**: ¿Cómo evitamos banear a un jugador que parece teletransportarse pero solo tiene una mala conexión? 
+Este sistema está diseñado para detectar comportamientos anómalos sin depender de escaneos en el cliente. Se centra en la **física del movimiento** y la **frecuencia de red**.
 
-La respuesta está en nuestra métrica propietaria: el **VP_Ratio** (Velocity-to-Ping Ratio).
+### El Desafío: Lag vs. Cheat
+La precisión es fundamental. Implementamos métricas avanzadas para distinguir entre un jugador con mala conexión y un atacante real:
+- **VP_Ratio**: Velocity-to-Ping Ratio original.
+- **Windowed Metrics**: Promedios y variaciones sobre ventanas de tiempo para filtrar picos de lag.
+- **Jitter Detection**: Análisis de cambios bruscos de dirección y aceleración (característico de aimbots).
 
 ---
 
 ## 🏗️ Arquitectura del Sistema
 
-El proyecto sigue un flujo de datos moderno y desacoplado:
+El proyecto está organizado de manera modular para facilitar el testing y la producción:
 
-
-
-1.  **Ingesta:** Simulación de eventos de telemetría (velocidad, ping, pérdida de paquetes).
-2.  **Procesamiento:** Pipeline con **Apache Beam** para Feature Engineering en tiempo real.
-3.  **Modelado:** Clasificador Random Forest entrenado para distinguir perfiles maliciosos.
-4.  **Interoperabilidad:** Exportación a **ONNX** para integración con microservicios en Go.
+```text
+├── src/
+│   ├── data_sim.py    # Generación de telemetría con perfiles físicos
+│   ├── pipeline.py    # Procesamiento con Apache Beam (Feature Engineering)
+│   ├── model.py       # Entrenamiento de Random Forest y exportación ONNX
+│   └── inference.py   # Motor de inferencia listo para producción
+├── tests/             # Suite de pruebas funcionales y de inferencia
+├── INTEGRATION_GUIDE.md # Guía para desarrolladores de backend (Go/Python)
+└── run_simulation.py  # Ejecutor end-to-end
+```
 
 ---
 
@@ -48,44 +55,53 @@ El proyecto sigue un flujo de datos moderno y desacoplado:
 
 | Capa | Herramienta |
 | :--- | :--- |
-| **Procesamiento** | Apache Beam |
-| **Análisis** | Pandas, NumPy, Seaborn |
-| **Machine Learning** | Scikit-Learn |
-| **Interoperabilidad** | ONNX, SKL2ONNX |
+| **Ingeniería de Datos** | Apache Beam (DirectRunner/Dataflow) |
+| **Ciencia de Datos** | Pandas, NumPy, Scikit-Learn |
+| **Interoperabilidad** | ONNX Runtime, SKL2ONNX |
+| **Testing** | Pytest |
 
 ---
 
-## ⚙️ Pipeline de Datos
+## ⚙️ Pipeline de Datos y Características
 
-### 1. Generación de Telemetría
-Simulamos tres tipos de perfiles de usuario basados en la física del motor de juego y la latencia de red:
-* **Legit:** Comportamiento estándar.
-* **Laggy:** Picos de velocidad debidos a alta latencia (Falsos Positivos comunes).
-* **Cheater:** Velocidad extrema con baja latencia (Anomalía real).
+### 1. Generación de Telemetría Realista
+Simulamos perfiles con comportamiento físico:
+* **Legit:** Movimientos suaves y velocidades consistentes.
+* **Laggy:** Picos de velocidad y teletransportación debido a pérdida de paquetes.
+* **Cheater (Aimbot/Speedhack):** Aceleraciones imposibles y cambios de dirección instantáneos (*Snapping*).
 
-### 2. Feature Engineering (Apache Beam)
-Calculamos el ratio crítico para la toma de decisiones:
-$VP\_Ratio = velocity / (ping + 1)$
-
-### 3. Visualización y Análisis
-El análisis exploratorio muestra que, mientras los jugadores con lag tienen velocidades altas, su **VP_Ratio** se mantiene bajo, permitiendo una separación clara de los atacantes reales.
-
-
+### 2. Ingeniería de Atributos (10 Features)
+El pipeline calcula métricas críticas en ventanas de tiempo:
+- **Spatial Features:** Seguimiento de coordenadas X, Y.
+- **Acceleration:** Derivada de la velocidad respecto al tiempo.
+- **Heading Jitter:** Desviación estándar de los cambios de ángulo de movimiento.
+- **Windowed Ratio:** Normalización de velocidad media vs latencia media.
 
 ---
 
 ## 📥 Instalación y Uso
 
-Sigue estos pasos para replicar el entorno de desarrollo y ejecutar el pipeline de detección:
-
 1. **Clonar el repositorio:**
    ```bash
-   git clone [https://github.com/EliuthMisraim/arc-raiders-anticheat-pipeline.git](https://github.com/EliuthMisraim/arc-raiders-anticheat-pipeline.git)
+   git clone https://github.com/EliuthMisraim/arc-raiders-anticheat-pipeline.git
    cd arc-raiders-anticheat-pipeline
+   ```
 
-Instalar dependencias:
+2. **Instalar dependencias:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Bash
-pip install apache-beam[gcp] skl2onnx onnxruntime scikit-learn seaborn pandas numpy
-Ejecutar el pipeline:
-Ejecuta el script principal o el notebook para generar el archivo anti_cheat_model.onnx.
+3. **Ejecutar Simulación Completa:**
+   Este comando genera datos, procesa el pipeline, entrena el modelo y verifica la inferencia.
+   ```bash
+   python run_simulation.py
+   ```
+
+---
+
+## 🔌 Guía de Integración
+
+El modelo se exporta automáticamente como `anti_cheat_model.onnx`. Esto permite que el servidor del juego (escrito en **Go**) realice detecciones con latencia mínima.
+
+Consulta la **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)** para ver ejemplos de código en Go y Python.
